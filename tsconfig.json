@@ -8,7 +8,7 @@
     "alwaysStrict": true,
     "charset": "utf-8",
     "downlevelIteration": true,
-    "module": "none",
+    "module": "umd",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
