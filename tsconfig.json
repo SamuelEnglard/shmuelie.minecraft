@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": false,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
+    "alwaysStrict": true,
     "charset": "utf-8",
     "downlevelIteration": true,
     "module": "umd",
@@ -12,7 +13,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitUseStrict": true,
+    "noImplicitUseStrict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true
