@@ -1,0 +1,17 @@
+{
+  "author": "Shmueli Englard",
+  "dependencies": {
+    "leaflet": "^1.3.0",
+    "leaflet-easybutton": "^2.3.0"
+  },
+  "description": "Customization to Overviewer",
+  "devDependencies": {
+    "@types/leaflet": "^1.2.0"
+  },
+  "files": [ "*/**/*.ts" ],
+  "homepage": "https://shmuelie.minecraft.englard.net/",
+  "license": "./LICENSE",
+  "name": "shmuelie.minecraft",
+  "private": true,
+  "readme": "./README.md"
+}
