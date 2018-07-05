@@ -1,39 +1,54 @@
-(function ()
+/// <reference types="leaflet-easybutton" />
+import * as L from 'leaflet'
+
+interface CardinalDirections
 {
-    "use strict";
-    overviewer.util.ready(function ()
+    NW: string
+    NE: string
+    SW: string
+    SE: string
+}
+
+declare module 'leaflet' {
+    export interface Map extends Evented
     {
-        overviewer.map.attributionControl.setPrefix('<a target="_blank" href="https://overviewer.org">Overviewer</a>/<a target="_blank" href="https://leafletjs.com/">Leaflet</a>');
-        var worldCtrl = overviewer.worldCtrl;
-        var rotation = {
-            clockwiseRotation: {
-                "NW": "SW",
-                "SW": "SW",
-                "SW": "NE",
-                "NE": "NW"
-            },
-            counterClockwiseRotation: {
-                "NW": "NE",
-                "NE": "SE",
-                "SE": "SW",
-                "SW": "NW"
-            }
+        attributionControl: L.Control.Attribution
+    }
+}
+
+overviewer.util.ready(function ()
+{
+    overviewer.map.attributionControl.setPrefix('<a target="_blank" href="https://overviewer.org">Overviewer</a>/<a target="_blank" href="https://leafletjs.com/">Leaflet</a>');
+    let worldCtrl = overviewer.worldCtrl;
+    let cwr = L.easyButton('<span class="rotation-button">&curvearrowright;</span>', function ()
+    {
+        let directions: CardinalDirections = {
+            "NW": "SW",
+            "SW": "SE",
+            "SE": "NE",
+            "NE": "NW"
         };
-        var rotationClick = function (btn, map)
-        {
-            worldCtrl.select.value = rotation[btn.options.id][worldCtrl.select.value];
-            worldCtrl.onChange({ target: worldCtrl.select });
-        };
-        var cwr = L.easyButton('<span class="rotation-button">&curvearrowright;</span>', rotationClick, "", "clockwiseRotation");
-        var ccwr = L.easyButton('<span class="rotation-button">&curvearrowleft;</span>', rotationClick, "", "counterClockwiseRotation");
-        var rotationBar = L.easyBar([ccwr, cwr]).setPosition("topright").addTo(overviewer.map);
-        worldCtrl.remove();
+        worldCtrl.select.value = directions[<keyof CardinalDirections>worldCtrl.select.value];
+        worldCtrl.onChange({ target: worldCtrl.select });
     });
-    var ogInit = overviewer.util.initialize;
-    overviewer.util.initialize = function ()
+    let ccwr = L.easyButton('<span class="rotation-button">&curvearrowleft;</span>', function ()
     {
-        ogInit();
-        overviewer.util.runReadyQueue();
-        overviewer.util.isReady = true;
-    };
-})();
+        let directions: CardinalDirections = {
+            "NW": "NE",
+            "NE": "SE",
+            "SE": "SW",
+            "SW": "NW"
+        };
+        worldCtrl.select.value = directions[<keyof CardinalDirections>worldCtrl.select.value];
+        worldCtrl.onChange({ target: worldCtrl.select });
+    });
+    L.easyBar([ccwr, cwr]).setPosition("topright").addTo(overviewer.map);
+    worldCtrl.remove();
+});
+var ogInit = overviewer.util.initialize;
+overviewer.util.initialize = function ()
+{
+    ogInit();
+    overviewer.util.runReadyQueue();
+    overviewer.util.isReady = true;
+};
