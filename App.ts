@@ -166,8 +166,7 @@ function goToHash()
         zoom = ovconf.minZoom;
 
     // build a fake event for the world switcher control
-    worldCtrl.onChange({ target: { value: world_name } });
-    worldCtrl.select.value = world_name;
+    worldCtrl.onChange({ selectedWorld: world_name });
     if (!app.map.hasLayer(target_layer))
     {
         app.map.addLayer(target_layer);
@@ -333,13 +332,13 @@ app.map.on("click", function (event)
 
 overviewerConfig.worlds.forEach(function (world_name)
 {
-    app.mapTypes[world_name] = {}
-    app.overlays[world_name] = {}
-    worldCtrl.addWorld(world_name);
+    app.mapTypes[world_name] = {};
+    app.overlays[world_name] = {};
 });
 
 compass.addTo(app.map);
 coord_box.addTo(app.map);
+worldCtrl.addTo(app.map);
 
 app.map.on('mousemove', function (event)
 {
@@ -431,7 +430,7 @@ app.map.setView(fromWorldToLatLng(tset.spawn[0], tset.spawn[1], tset.spawn[2], t
 
 if (!initHash())
 {
-    worldCtrl.onChange({ target: { value: app.current_world } });
+    worldCtrl.onChange({ selectedWorld: app.current_world });
 }
 
 export default app;

@@ -1,16 +1,25 @@
 import * as L from 'leaflet'
-import overviewer from './App';
+import overviewer from './App'
+import 'leaflet-easybutton'
+
+interface CardinalDirections
+{
+    NW: string
+    NE: string
+    SW: string
+    SE: string
+}
 
 interface ChangeEvent
 {
-    target: { value: string }
+    selectedWorld: string;
 }
 
 interface WorldsPrototype extends L.Control
 {
-    container: HTMLDivElement;
-    select: HTMLSelectElement;
-    addWorld(world: string): void;
+    clockwiseRotation: L.Control.EasyButton;
+    counterClockwiseRotation: L.Control.EasyButton;
+    rotationBar: L.Control.EasyBar;
     onChange(ev: ChangeEvent): void;
 }
 
@@ -20,34 +29,37 @@ interface Worlds
 }
 
 const worlds: Worlds = L.Control.extend({
-    initialize: function (options: L.ControlOptions): void
+    initialize: function (this: WorldsPrototype, options: L.ControlOptions): void
     {
         L.Util.setOptions(this, options);
-
-        this.container = L.DomUtil.create('div', 'worldcontrol');
-        this.select = L.DomUtil.create('select');
-        this.select.onchange = this.onChange;
-        this.container.appendChild(this.select);
+        this.clockwiseRotation = L.easyButton('<span class="rotation-button">&curvearrowright;</span>', () =>
+        {
+            const directions: CardinalDirections = {
+                "NW": "SW",
+                "SW": "SE",
+                "SE": "NE",
+                "NE": "NW"
+            };
+            this.onChange({ selectedWorld: directions[<keyof CardinalDirections>overviewer.current_world] });
+        });
+        this.counterClockwiseRotation = L.easyButton('<span class="rotation-button">&curvearrowleft;</span>', () =>
+        {
+            const directions: CardinalDirections = {
+                "NW": "NE",
+                "NE": "SE",
+                "SE": "SW",
+                "SW": "NW"
+            };
+            this.onChange({ selectedWorld: directions[<keyof CardinalDirections>overviewer.current_world] });
+        });
+        this.rotationBar = L.easyBar([this.counterClockwiseRotation, this.clockwiseRotation]).setPosition("topright");
     },
-    addWorld: function (world: string): void
+    onChange: function (this: WorldsPrototype, ev: ChangeEvent): void
     {
-        var option: HTMLOptionElement = <HTMLOptionElement>L.DomUtil.create('option');
-        option.value = world;
-        option.innerText = world;
-        this.select.appendChild(option);
-    },
-    onChange: function (ev: ChangeEvent): void
-    {
-        console.log(ev.target);
-        console.log(ev.target.value);
-        var selected_world = ev.target.value;
+        var selected_world = ev.selectedWorld;
 
 
         // save current view for the current_world
-        if (overviewer.map === null)
-        {
-            return;
-        }
         overviewer.centers[overviewer.current_world].latLng = overviewer.map.getCenter();
         overviewer.centers[overviewer.current_world].zoom = overviewer.map.getZoom();
 
@@ -110,11 +122,13 @@ const worlds: Worlds = L.Control.extend({
             overviewer.map.addLayer(overviewer.mapTypes[selected_world][tset_name]);
         }
     },
-    onAdd: function (): HTMLElement
+    onAdd: function (this: WorldsPrototype, map: L.Map): HTMLElement | null
     {
-        console.log("onAdd mycontrol");
-
-        return this.container
+        if (this.rotationBar.onAdd)
+        {
+            return this.rotationBar.onAdd(map);
+        }
+        return null;
     }
 });
 
