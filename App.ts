@@ -371,7 +371,7 @@ overviewerConfig.tilesets.forEach(function (obj)
     if (haveSigns == true)
     {
         // if there are markers for this tileset, create them now
-        if ((typeof markers !== 'undefined') && (obj.path in markers))
+        if ((typeof markers !== 'undefined') && (typeof markersDB !== "undefined" ) && (obj.path in markers))
         {
             console.log("this tileset has markers:", obj);
             obj.marker_groups = {};
