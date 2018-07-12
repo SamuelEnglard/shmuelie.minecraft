@@ -26,6 +26,10 @@ const coordBox: CoordBox = L.Control.extend({
         const currWorld = app.current_world;
 
         const currTileset = app.current_layer[currWorld];
+        if (currTileset === undefined)
+        {
+            return;
+        }
 
         const ovconf = currTileset.tileSetConfig;
 

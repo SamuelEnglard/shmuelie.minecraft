@@ -119,9 +119,10 @@ const worlds: Worlds = L.Control.extend({
 
         overviewer.current_world = selected_world;
 
-        if (overviewer.mapTypes[selected_world] && overviewer.current_layer[selected_world])
+        const currTileset = overviewer.current_layer[selected_world];
+        if (overviewer.mapTypes[selected_world] && currTileset !== undefined)
         {
-            overviewer.map.addLayer(overviewer.mapTypes[selected_world][overviewer.current_layer[selected_world].tileSetConfig.name]);
+            overviewer.map.addLayer(overviewer.mapTypes[selected_world][currTileset.tileSetConfig.name]);
         }
         else
         {
