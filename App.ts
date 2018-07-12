@@ -396,7 +396,7 @@ overviewerConfig.tilesets.forEach(function (obj)
                 {
                     m_icon = icon;
                 }
-                let new_marker = L.marker(latlng, { icon: m_icon });
+                let new_marker = L.marker(latlng, { icon: m_icon, title: db.hovertext });
                 new_marker.bindPopup(db.text);
                 marker_group.addLayer(new_marker);
             }
