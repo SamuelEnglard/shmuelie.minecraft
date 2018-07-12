@@ -32,7 +32,7 @@ const worlds: Worlds = L.Control.extend({
     initialize: function (this: WorldsPrototype, options: L.ControlOptions): void
     {
         L.Util.setOptions(this, options);
-        this.clockwiseRotation = L.easyButton("<span class="rotation-button">&curvearrowright;</span>", () =>
+        this.clockwiseRotation = L.easyButton("<span class='rotation-button'>&curvearrowright;</span>", () =>
         {
             const directions: CardinalDirections = {
                 "NW": "SW",
@@ -42,7 +42,7 @@ const worlds: Worlds = L.Control.extend({
             };
             this.onChange({ selectedWorld: directions[<keyof CardinalDirections>overviewer.current_world] });
         });
-        this.counterClockwiseRotation = L.easyButton("<span class="rotation-button">&curvearrowleft;</span>", () =>
+        this.counterClockwiseRotation = L.easyButton("<span class='rotation-button'>&curvearrowleft;</span>", () =>
         {
             const directions: CardinalDirections = {
                 "NW": "NE",
