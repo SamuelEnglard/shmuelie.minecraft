@@ -56,6 +56,46 @@ const worldCtrl = new Worlds();
 const coord_box = new CoordBox();
 let haveSigns = false;
 
+function runReadyQueue(): void
+{
+    if (readyQueue.length === 0) return;
+    readyQueue.forEach(function (callback)
+    {
+        callback();
+    });
+    readyQueue = [];
+}
+
+const app: App = {
+    current_world: "",
+    current_layer: {},
+    map: L.map("mcmap", {
+        crs: L.CRS.Simple,
+        minZoom: 0
+    }),
+    layerCtrl: null,
+    centers: {},
+    mapTypes: {},
+    overlays: {},
+    ready: function (callback: () => void): void
+    {
+        if (typeof callback !== 'function')
+        {
+            return;
+        }
+        if (isReady)
+        { // run instantly if overviewer already is ready
+            readyQueue.push(callback);
+            runReadyQueue();
+        }
+        else
+        {
+            readyQueue.push(callback); // wait until initialize is finished
+        }
+    }
+};
+export default app;
+
 function initHash(): boolean
 {
     var newHash = window.location.hash;
@@ -202,45 +242,6 @@ function goToHash()
         locationMarker.addTo(app.map);
     }
 }
-
-function runReadyQueue(): void
-{
-    if (readyQueue.length === 0) return;
-    readyQueue.forEach(function (callback)
-    {
-        callback();
-    });
-    readyQueue = [];
-}
-
-const app: App = {
-    current_world: "",
-    current_layer: {},
-    map: L.map("mcmap", {
-        crs: L.CRS.Simple,
-        minZoom: 0
-    }),
-    layerCtrl: null,
-    centers: {},
-    mapTypes: {},
-    overlays: {},
-    ready: function (callback: () => void): void
-    {
-        if (typeof callback !== 'function')
-        {
-            return;
-        }
-        if (isReady)
-        { // run instantly if overviewer already is ready
-            readyQueue.push(callback);
-            runReadyQueue();
-        }
-        else
-        {
-            readyQueue.push(callback); // wait until initialize is finished
-        }
-    }
-};
 
 app.map.on("baselayerchange", function (event)
 {
@@ -432,5 +433,3 @@ if (!initHash())
 {
     worldCtrl.onChange({ selectedWorld: app.current_world });
 }
-
-export default app;
