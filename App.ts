@@ -336,7 +336,6 @@ app.map.on("baselayerchange", function (event)
     // reset the markers control with the markers for this layer
     if (ovconf.marker_groups)
     {
-        console.log("markers for", ovconf.marker_groups);
         ovconf.markerCtrl = L.control.layers(undefined, ovconf.marker_groups, { collapsed: false }).addTo(app.map);
     }
 
@@ -349,14 +348,6 @@ app.map.on("moveend", function ()
 });
 
 const tset = overviewerConfig.tilesets[0];
-
-app.map.on("click", function (event)
-{
-    const e: L.LeafletMouseEvent = <L.LeafletMouseEvent>event;
-    console.log(e.latlng);
-    const point = fromLatLngToWorld(e.latlng.lat, e.latlng.lng, tset);
-    console.log(point);
-});
 
 overviewerConfig.worlds.forEach(function (world_name)
 {
@@ -401,7 +392,6 @@ overviewerConfig.tilesets.forEach(function (obj)
     // if there are markers for this tileset, create them now
     if ((typeof markers !== "undefined") && (typeof markersDB !== "undefined") && (obj.path in markers))
     {
-        console.log("this tileset has markers:", obj);
         obj.marker_groups = {};
 
         for (let mkidx = 0; mkidx < markers[obj.path].length; mkidx++)
@@ -409,7 +399,6 @@ overviewerConfig.tilesets.forEach(function (obj)
             const marker_group = L.layerGroup(undefined, { attribution: "Player images from <a href='https://minotar.net/' target='_blank'>Minotar</a>" });
             const marker_entry = markers[obj.path][mkidx];
             const icon = L.icon({ iconUrl: marker_entry.icon });
-            console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
 
             for (let dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
             {
