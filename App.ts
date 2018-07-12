@@ -3,6 +3,8 @@ import { fromWorldToLatLng, fromLatLngToWorld, getTileUrlGenerator } from './Uti
 import Compass from './Compass'
 import Worlds from './Worlds';
 import CoordBox from './CoordBox';
+import './markers'
+import './markersDB'
 
 interface OverviewerLayer extends L.Layer
 {
