@@ -60,8 +60,7 @@ const worlds: Worlds = L.Control.extend({
 
 
         // save current view for the current_world
-        overviewer.centers[overviewer.current_world].latLng = overviewer.map.getCenter();
-        overviewer.centers[overviewer.current_world].zoom = overviewer.map.getZoom();
+        overviewer.centers[overviewer.current_world] = { latLng: overviewer.map.getCenter(), zoom: overviewer.map.getZoom() };
 
         if (overviewer.layerCtrl !== null)
         {
@@ -109,7 +108,10 @@ const worlds: Worlds = L.Control.extend({
         }
 
         var center = overviewer.centers[selected_world];
-        overviewer.map.setView(center.latLng, center.zoom);
+        if (center !== undefined)
+        {
+            overviewer.map.setView(center.latLng, center.zoom);
+        }
 
         overviewer.current_world = selected_world;
 

@@ -21,7 +21,7 @@ interface OverviewerLayersObject extends L.Control.LayersObject
 
 interface Centers
 {
-    [world: string]: { latLng: L.LatLng, zoom: number }
+    [world: string]: { latLng: L.LatLng, zoom: number } | undefined
 }
 
 interface CurrentLayer
