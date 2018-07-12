@@ -356,6 +356,7 @@ overviewerConfig.tilesets.forEach(function (obj)
         maxZoom: obj.maxZoom,
         minZoom: obj.minZoom,
         errorTileUrl: obj.base + obj.path + "/blank." + obj.imgextension,
+        attribution: "<a href='https://overviewer.org/' target='_blank'>Overviewer</a>"
     });
     myLayer.getTileUrl = getTileUrlGenerator(obj.path, obj.base, obj.imgextension);
     myLayer.tileSetConfig = obj;
