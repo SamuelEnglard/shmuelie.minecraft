@@ -5,7 +5,7 @@ interface Marker
     y: number;
     z: number;
     hovertext?: string;
-    icon: string;
+    icon?: string;
 }
 
 interface MarkerGroup

@@ -19,6 +19,14 @@
     "strict": true,
     "moduleResolution": "node",
     "target": "es5",
-    "outFile": "overviewer.js"
-  }
+    "outFile": "overviewer.js",
+    "removeComments": true,
+    "plugins": [
+      {
+        "name": "tslint-language-service",
+        "configFile": "./tslint.json"
+      }
+    ]
+  },
+  "include": [ "*.ts" ]
 }

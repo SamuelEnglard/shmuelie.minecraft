@@ -1,65 +1,68 @@
-import * as L from 'leaflet'
-import { fromWorldToLatLng, fromLatLngToWorld, getTileUrlGenerator } from './Utils';
-import Compass from './Compass'
-import Worlds from './Worlds';
-import CoordBox from './CoordBox';
-import './markers'
-import './markersDB'
+import * as L from "leaflet";
+import { fromWorldToLatLng, fromLatLngToWorld, getTileUrlGenerator } from "./Utils";
+import Compass from "./Compass";
+import Worlds from "./Worlds";
+import CoordBox from "./CoordBox";
+import "./markers";
+import "./markersDB";
 
 interface OverviewerLayer extends L.Layer
 {
-    tileSetConfig: OverviewerTileSet
+    tileSetConfig: OverviewerTileSet;
 }
 
 interface OverviewTileLayer extends L.TileLayer, OverviewerLayer
 {
-    getTileUrl: (o: L.Coords) => string
+    getTileUrl: (o: L.Coords) => string;
 }
 
 interface OverviewerLayersObject extends L.Control.LayersObject
 {
-    [name: string]: OverviewerLayer
+    [name: string]: OverviewerLayer;
 }
 
 interface Centers
 {
-    [world: string]: { latLng: L.LatLng, zoom: number } | undefined
+    [world: string]: { latLng: L.LatLng, zoom: number } | undefined;
 }
 
 interface CurrentLayer
 {
-    [world: string]: OverviewerLayer
+    [world: string]: OverviewerLayer;
 }
 
 interface MapTypes
 {
-    [world: string]: OverviewerLayersObject
+    [world: string]: OverviewerLayersObject;
 }
 
 interface App
 {
-    current_world: string
-    current_layer: CurrentLayer
-    map: L.Map
-    layerCtrl: L.Control.Layers | null
-    centers: Centers
-    mapTypes: MapTypes
-    overlays: MapTypes
-    ready(callback: () => void): void
+    current_world: string;
+    current_layer: CurrentLayer;
+    map: L.Map;
+    layerCtrl: L.Control.Layers | null;
+    centers: Centers;
+    mapTypes: MapTypes;
+    overlays: MapTypes;
+    ready(callback: () => void): void;
 }
 
 let isReady = false;
 let readyQueue = <(() => void)[]>[];
 const compass = new Compass(overviewerConfig.CONST.image.compass);
-let spawnMarker: L.Marker<any> | null = null;
-let locationMarker: L.Marker<any> | null = null;
+let spawnMarker: L.Marker<void> | null = null;
+let locationMarker: L.Marker<void> | null = null;
 let lastHash = "";
 const worldCtrl = new Worlds();
 const coord_box = new CoordBox();
 
 function runReadyQueue(): void
 {
-    if (readyQueue.length === 0) return;
+    if (readyQueue.length === 0)
+    {
+        return;
+    }
     readyQueue.forEach(function (callback)
     {
         callback();
@@ -80,7 +83,7 @@ const app: App = {
     overlays: {},
     ready: function (callback: () => void): void
     {
-        if (typeof callback !== 'function')
+        if (typeof callback !== "function")
         {
             return;
         }
@@ -99,7 +102,7 @@ export default app;
 
 function initHash(): boolean
 {
-    var newHash = window.location.hash;
+    const newHash = window.location.hash;
     if (lastHash !== newHash)
     {
         lastHash = newHash;
@@ -117,7 +120,7 @@ function initHash(): boolean
 function setHash(x: number, y: number, z: number, zoom: number | "max" | "min", w: string, maptype: string): void
 {
     // save this info is a nice easy to parse format
-    var newHash = "#/" + Math.floor(x) + "/" + Math.floor(y) + "/" + Math.floor(z) + "/" + zoom + "/" + encodeURI(w) + "/" + encodeURI(maptype);
+    const newHash = "#/" + Math.floor(x) + "/" + Math.floor(y) + "/" + Math.floor(z) + "/" + zoom + "/" + encodeURI(w) + "/" + encodeURI(maptype);
     lastHash = newHash; // this should not trigger initHash
     window.location.replace(newHash);
 }
@@ -125,26 +128,30 @@ function setHash(x: number, y: number, z: number, zoom: number | "max" | "min", 
 function updateHash()
 {
     // name of current world
-    var currWorld = app.current_world;
-    if (currWorld == null) { return; }
+    const currWorld = app.current_world;
+    if (currWorld.length === 0)
+    {
+        return;
+    }
 
-    var currTileset = app.current_layer[currWorld];
-    if (currTileset == null) { return; }
+    const currTileset = app.current_layer[currWorld];
 
-    var ovconf = currTileset.tileSetConfig;
+    const ovconf = currTileset.tileSetConfig;
 
-    var coordinates = fromLatLngToWorld(app.map.getCenter().lat,
+    const coordinates = fromLatLngToWorld(app.map.getCenter().lat,
         app.map.getCenter().lng,
         ovconf);
-    var zoom: number | "max" | "min" = app.map.getZoom();
+    let zoom: number | "max" | "min" = app.map.getZoom();
 
     if (zoom >= ovconf.maxZoom)
     {
-        zoom = 'max';
-    } else if (zoom <= ovconf.minZoom)
+        zoom = "max";
+    }
+    else if (zoom <= ovconf.minZoom)
     {
-        zoom = 'min';
-    } else
+        zoom = "min";
+    }
+    else
     {
         // default to (map-update friendly) negative zooms
         zoom -= ovconf.maxZoom;
@@ -155,12 +162,12 @@ function updateHash()
 function goToHash()
 {
     // Note: the actual data begins at coords[1], coords[0] is empty.
-    var coords = window.location.hash.split("/");
+    const coords = window.location.hash.split("/");
 
 
-    var zoom: string | number = "";
-    var world_name: string = "";
-    var tileset_name: string = "";
+    let zoom: string | number = "";
+    let world_name: string = "";
+    let tileset_name: string = "";
     // The if-statements try to prevent unexpected behaviour when using incomplete hashes, e.g. older links
     if (coords.length > 4)
     {
@@ -172,28 +179,31 @@ function goToHash()
         tileset_name = decodeURI(coords[6]);
     }
 
-    var target_layer = app.mapTypes[world_name][tileset_name];
-    var ovconf = target_layer.tileSetConfig;
+    const target_layer = app.mapTypes[world_name][tileset_name];
+    const ovconf = target_layer.tileSetConfig;
 
-    var latlngcoords = fromWorldToLatLng(parseInt(coords[1]),
-        parseInt(coords[2]),
-        parseInt(coords[3]),
+    const latlngcoords = fromWorldToLatLng(parseInt(coords[1], 10),
+        parseInt(coords[2], 10),
+        parseInt(coords[3], 10),
         ovconf);
 
-    if (zoom == 'max')
+    if (zoom === "max")
     {
         zoom = ovconf.maxZoom;
-    } else if (zoom == 'min')
+    }
+    else if (zoom === "min")
     {
         zoom = ovconf.minZoom;
-    } else
+    }
+    else
     {
-        zoom = parseInt(zoom);
+        zoom = parseInt(zoom, 10);
         if (zoom < 0)
         {
             // if zoom is negative, treat it as a "zoom out from max"
             zoom += ovconf.maxZoom;
-        } else
+        }
+        else
         {
             // fall back to default zoom
             zoom = ovconf.defaultZoom;
@@ -202,9 +212,13 @@ function goToHash()
 
     // clip zoom
     if (zoom > ovconf.maxZoom)
+    {
         zoom = ovconf.maxZoom;
+    }
     if (zoom < ovconf.minZoom)
+    {
         zoom = ovconf.minZoom;
+    }
 
     // build a fake event for the world switcher control
     worldCtrl.onChange({ selectedWorld: world_name });
@@ -217,27 +231,27 @@ function goToHash()
 
     if (ovconf.showlocationmarker)
     {
-        var locationIcon = L.icon({
+        const locationIcon = L.icon({
             iconUrl: overviewerConfig.CONST.image.queryMarker,
             iconRetinaUrl: overviewerConfig.CONST.image.queryMarker2x,
             iconSize: [32, 37],
             iconAnchor: [15, 33],
         });
-        var locationm = L.marker(latlngcoords, {
+        const locationm = L.marker(latlngcoords, {
             icon: locationIcon,
             title: "Linked location"
         });
-        locationMarker = locationm
-        locationMarker.on('contextmenu', function ()
+        locationMarker = locationm;
+        locationMarker.on("contextmenu", function ()
         {
             if (locationMarker !== null)
             {
                 locationMarker.remove();
             }
         });
-        locationMarker.on('click', function (ev)
+        locationMarker.on("click", function (ev)
         {
-            let event: L.LeafletMouseEvent = <L.LeafletMouseEvent>ev;
+            const event: L.LeafletMouseEvent = <L.LeafletMouseEvent>ev;
             app.map.setView(event.latlng, app.map.getZoom());
         });
         locationMarker.addTo(app.map);
@@ -251,13 +265,15 @@ app.map.on("baselayerchange", function (event)
     // before updating the current_layer, remove the marker control, if it exists
     if (app.current_world && app.current_layer[app.current_world])
     {
-        let tsc = app.current_layer[app.current_world].tileSetConfig;
+        const tsc = app.current_layer[app.current_world].tileSetConfig;
 
         if (tsc.markerCtrl)
+        {
             tsc.markerCtrl.remove();
+        }
         if (tsc.marker_groups)
         {
-            for (var marker_group in tsc.marker_groups)
+            for (const marker_group in tsc.marker_groups)
             {
                 tsc.marker_groups[marker_group].remove();
             }
@@ -265,7 +281,7 @@ app.map.on("baselayerchange", function (event)
 
     }
     app.current_layer[app.current_world] = layer;
-    var ovconf = layer.tileSetConfig;
+    const ovconf = layer.tileSetConfig;
 
     // Change the compass
     compass.render(ovconf.north_direction);
@@ -282,27 +298,28 @@ app.map.on("baselayerchange", function (event)
     {
         spawnMarker.remove();
     }
-    if (typeof (ovconf.spawn) == "object")
+    if (typeof (ovconf.spawn) === "object")
     {
-        var spawnIcon = L.icon({
+        const spawnIcon = L.icon({
             iconUrl: overviewerConfig.CONST.image.spawnMarker,
             iconRetinaUrl: overviewerConfig.CONST.image.spawnMarker2x,
             iconSize: [32, 37],
             iconAnchor: [15, 33],
         });
-        var latlng = fromWorldToLatLng(ovconf.spawn[0],
+        const latlng = fromWorldToLatLng(ovconf.spawn[0],
             ovconf.spawn[1],
             ovconf.spawn[2],
             ovconf);
-        var ohaimark = L.marker(latlng, { icon: spawnIcon, title: "Spawn" });
-        ohaimark.on('click', function (ev2)
+        const ohaimark = <L.Marker<void>>L.marker(latlng, { icon: spawnIcon, title: "Spawn" });
+        ohaimark.on("click", function (ev2)
         {
-            var event2: L.LeafletMouseEvent = <L.LeafletMouseEvent>ev2;
+            const event2: L.LeafletMouseEvent = <L.LeafletMouseEvent>ev2;
             app.map.setView(event2.latlng, app.map.getZoom());
         });
-        spawnMarker = ohaimark
+        spawnMarker = ohaimark;
         spawnMarker.addTo(app.map);
-    } else
+    }
+    else
     {
         spawnMarker = null;
     }
@@ -317,18 +334,18 @@ app.map.on("baselayerchange", function (event)
     updateHash();
 });
 
-app.map.on('moveend', function ()
+app.map.on("moveend", function ()
 {
     updateHash();
 });
 
-var tset = overviewerConfig.tilesets[0];
+const tset = overviewerConfig.tilesets[0];
 
 app.map.on("click", function (event)
 {
-    let e: L.LeafletMouseEvent = <L.LeafletMouseEvent>event;
+    const e: L.LeafletMouseEvent = <L.LeafletMouseEvent>event;
     console.log(e.latlng);
-    var point = fromLatLngToWorld(e.latlng.lat, e.latlng.lng, tset);
+    const point = fromLatLngToWorld(e.latlng.lat, e.latlng.lng, tset);
     console.log(point);
 });
 
@@ -342,15 +359,15 @@ compass.addTo(app.map);
 coord_box.addTo(app.map);
 worldCtrl.addTo(app.map);
 
-app.map.on('mousemove', function (event)
+app.map.on("mousemove", function (event)
 {
-    let ev: L.LeafletMouseEvent = <L.LeafletMouseEvent>event;
+    const ev: L.LeafletMouseEvent = <L.LeafletMouseEvent>event;
     coord_box.render(ev.latlng);
 });
 
 overviewerConfig.tilesets.forEach(function (obj)
 {
-    var myLayer: OverviewTileLayer = <OverviewTileLayer>L.tileLayer('', {
+    const myLayer: OverviewTileLayer = <OverviewTileLayer>L.tileLayer("", {
         tileSize: overviewerConfig.CONST.tileSize,
         noWrap: true,
         maxZoom: obj.maxZoom,
@@ -364,7 +381,8 @@ overviewerConfig.tilesets.forEach(function (obj)
     if (obj.isOverlay)
     {
         app.overlays[obj.world][obj.name] = myLayer;
-    } else
+    }
+    else
     {
         app.mapTypes[obj.world][obj.name] = myLayer;
     }
@@ -372,31 +390,32 @@ overviewerConfig.tilesets.forEach(function (obj)
     obj.marker_groups = undefined;
 
     // if there are markers for this tileset, create them now
-    if ((typeof markers !== 'undefined') && (typeof markersDB !== "undefined") && (obj.path in markers))
+    if ((typeof markers !== "undefined") && (typeof markersDB !== "undefined") && (obj.path in markers))
     {
         console.log("this tileset has markers:", obj);
         obj.marker_groups = {};
 
-        for (var mkidx = 0; mkidx < markers[obj.path].length; mkidx++)
+        for (let mkidx = 0; mkidx < markers[obj.path].length; mkidx++)
         {
-            var marker_group = L.layerGroup();
-            var marker_entry = markers[obj.path][mkidx];
-            var icon = L.icon({ iconUrl: marker_entry.icon });
+            const marker_group = L.layerGroup();
+            const marker_entry = markers[obj.path][mkidx];
+            const icon = L.icon({ iconUrl: marker_entry.icon });
             console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
 
-            for (var dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
+            for (let dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
             {
-                var db = markersDB[marker_entry.groupName].raw[dbidx];
-                var latlng = fromWorldToLatLng(db.x, db.y, db.z, obj);
-                var m_icon;
-                if (db.icon != undefined)
+                const db = markersDB[marker_entry.groupName].raw[dbidx];
+                const latlng = fromWorldToLatLng(db.x, db.y, db.z, obj);
+                let m_icon;
+                if (db.icon !== undefined)
                 {
                     m_icon = L.icon({ iconUrl: db.icon });
-                } else
+                }
+                else
                 {
                     m_icon = icon;
                 }
-                let new_marker = L.marker(latlng, { icon: m_icon, title: db.hovertext });
+                const new_marker = L.marker(latlng, { icon: m_icon, title: db.hovertext });
                 new_marker.bindPopup(db.text);
                 marker_group.addLayer(new_marker);
             }
@@ -404,11 +423,12 @@ overviewerConfig.tilesets.forEach(function (obj)
         }
     }
 
-    if (typeof (obj.spawn) == "object")
+    if (typeof (obj.spawn) === "object")
     {
-        var latlng = fromWorldToLatLng(obj.spawn[0], obj.spawn[1], obj.spawn[2], obj);
+        const latlng = fromWorldToLatLng(obj.spawn[0], obj.spawn[1], obj.spawn[2], obj);
         app.centers[obj.world] = { latLng: L.latLng(latlng), zoom: 1 };
-    } else
+    }
+    else
     {
         app.centers[obj.world] = {
             latLng: L.latLng(0, 0),
@@ -431,3 +451,5 @@ if (!initHash())
 {
     worldCtrl.onChange({ selectedWorld: app.current_world });
 }
+
+isReady = true;

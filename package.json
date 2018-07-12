@@ -6,9 +6,11 @@
   },
   "description": "Customization to Overviewer",
   "devDependencies": {
-    "@types/leaflet": "^1.2.0"
+    "@types/leaflet": "^1.2.0",
+    "typescript": "~2.7.0",
+    "tslint": "5.10.0",
+    "tslint-language-service": "0.9.9"
   },
-  "files": [ "./*.ts" ],
   "homepage": "https://shmuelie.minecraft.englard.net/",
   "license": "./LICENSE",
   "name": "shmuelie.minecraft",

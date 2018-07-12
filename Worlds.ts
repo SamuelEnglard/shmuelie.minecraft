@@ -1,13 +1,13 @@
-import * as L from 'leaflet'
-import overviewer from './App'
-import 'leaflet-easybutton'
+import * as L from "leaflet";
+import overviewer from "./App";
+import "leaflet-easybutton";
 
 interface CardinalDirections
 {
-    NW: string
-    NE: string
-    SW: string
-    SE: string
+    NW: string;
+    NE: string;
+    SW: string;
+    SE: string;
 }
 
 interface ChangeEvent
@@ -32,7 +32,7 @@ const worlds: Worlds = L.Control.extend({
     initialize: function (this: WorldsPrototype, options: L.ControlOptions): void
     {
         L.Util.setOptions(this, options);
-        this.clockwiseRotation = L.easyButton('<span class="rotation-button">&curvearrowright;</span>', () =>
+        this.clockwiseRotation = L.easyButton("<span class="rotation-button">&curvearrowright;</span>", () =>
         {
             const directions: CardinalDirections = {
                 "NW": "SW",
@@ -42,7 +42,7 @@ const worlds: Worlds = L.Control.extend({
             };
             this.onChange({ selectedWorld: directions[<keyof CardinalDirections>overviewer.current_world] });
         });
-        this.counterClockwiseRotation = L.easyButton('<span class="rotation-button">&curvearrowleft;</span>', () =>
+        this.counterClockwiseRotation = L.easyButton("<span class="rotation-button">&curvearrowleft;</span>", () =>
         {
             const directions: CardinalDirections = {
                 "NW": "NE",
@@ -56,7 +56,7 @@ const worlds: Worlds = L.Control.extend({
     },
     onChange: function (this: WorldsPrototype, ev: ChangeEvent): void
     {
-        var selected_world = ev.selectedWorld;
+        const selected_world = ev.selectedWorld;
 
 
         // save current view for the current_world
@@ -73,19 +73,21 @@ const worlds: Worlds = L.Control.extend({
             { collapsed: false })
             .addTo(overviewer.map);
 
-        for (var world_name in overviewer.mapTypes)
+        for (const world_name in overviewer.mapTypes)
         {
-            for (var tset_name in overviewer.mapTypes[world_name])
+            for (const tset_name in overviewer.mapTypes[world_name])
             {
-                var lyr = overviewer.mapTypes[world_name][tset_name];
-                if (world_name != selected_world)
+                const lyr = overviewer.mapTypes[world_name][tset_name];
+                if (world_name !== selected_world)
                 {
                     if (overviewer.map.hasLayer(lyr))
+                    {
                         overviewer.map.removeLayer(lyr);
+                    }
                 }
                 if (lyr.tileSetConfig.marker_groups)
                 {
-                    for (var marker_group in lyr.tileSetConfig.marker_groups)
+                    for (const marker_group in lyr.tileSetConfig.marker_groups)
                     {
                         lyr.tileSetConfig.marker_groups[marker_group].remove();
                     }
@@ -96,18 +98,20 @@ const worlds: Worlds = L.Control.extend({
                 }
             }
 
-            for (var tset_name in overviewer.overlays[world_name])
+            for (const tset_name in overviewer.overlays[world_name])
             {
-                var lyr = overviewer.overlays[world_name][tset_name];
-                if (world_name != selected_world)
+                const lyr = overviewer.overlays[world_name][tset_name];
+                if (world_name !== selected_world)
                 {
                     if (overviewer.map.hasLayer(lyr))
+                    {
                         overviewer.map.removeLayer(lyr);
+                    }
                 }
             }
         }
 
-        var center = overviewer.centers[selected_world];
+        const center = overviewer.centers[selected_world];
         if (center !== undefined)
         {
             overviewer.map.setView(center.latLng, center.zoom);
@@ -118,9 +122,10 @@ const worlds: Worlds = L.Control.extend({
         if (overviewer.mapTypes[selected_world] && overviewer.current_layer[selected_world])
         {
             overviewer.map.addLayer(overviewer.mapTypes[selected_world][overviewer.current_layer[selected_world].tileSetConfig.name]);
-        } else
+        }
+        else
         {
-            var tset_name = Object.keys(overviewer.mapTypes[selected_world])[0]
+            const tset_name = Object.keys(overviewer.mapTypes[selected_world])[0];
             overviewer.map.addLayer(overviewer.mapTypes[selected_world][tset_name]);
         }
     },
