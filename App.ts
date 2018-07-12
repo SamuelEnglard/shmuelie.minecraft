@@ -56,7 +56,6 @@ let locationMarker: L.Marker<any> | null = null;
 let lastHash = "";
 const worldCtrl = new Worlds();
 const coord_box = new CoordBox();
-let haveSigns = false;
 
 function runReadyQueue(): void
 {
@@ -371,42 +370,38 @@ overviewerConfig.tilesets.forEach(function (obj)
 
     obj.marker_groups = undefined;
 
-    if (haveSigns == true)
+    // if there are markers for this tileset, create them now
+    if ((typeof markers !== 'undefined') && (typeof markersDB !== "undefined") && (obj.path in markers))
     {
-        // if there are markers for this tileset, create them now
-        if ((typeof markers !== 'undefined') && (typeof markersDB !== "undefined" ) && (obj.path in markers))
+        console.log("this tileset has markers:", obj);
+        obj.marker_groups = {};
+
+        for (var mkidx = 0; mkidx < markers[obj.path].length; mkidx++)
         {
-            console.log("this tileset has markers:", obj);
-            obj.marker_groups = {};
+            var marker_group = L.layerGroup();
+            var marker_entry = markers[obj.path][mkidx];
+            var icon = L.icon({ iconUrl: marker_entry.icon });
+            console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
 
-            for (var mkidx = 0; mkidx < markers[obj.path].length; mkidx++)
+            for (var dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
             {
-                var marker_group = L.layerGroup();
-                var marker_entry = markers[obj.path][mkidx];
-                var icon = L.icon({ iconUrl: marker_entry.icon });
-                console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
-
-                for (var dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
+                var db = markersDB[marker_entry.groupName].raw[dbidx];
+                var latlng = fromWorldToLatLng(db.x, db.y, db.z, obj);
+                var m_icon;
+                if (db.icon != undefined)
                 {
-                    var db = markersDB[marker_entry.groupName].raw[dbidx];
-                    var latlng = fromWorldToLatLng(db.x, db.y, db.z, obj);
-                    var m_icon;
-                    if (db.icon != undefined)
-                    {
-                        m_icon = L.icon({ iconUrl: db.icon });
-                    } else
-                    {
-                        m_icon = icon;
-                    }
-                    let new_marker = L.marker(latlng, { icon: m_icon });
-                    new_marker.bindPopup(db.text);
-                    marker_group.addLayer(new_marker);
+                    m_icon = L.icon({ iconUrl: db.icon });
+                } else
+                {
+                    m_icon = icon;
                 }
-                obj.marker_groups[marker_entry.displayName] = marker_group;
+                let new_marker = L.marker(latlng, { icon: m_icon });
+                new_marker.bindPopup(db.text);
+                marker_group.addLayer(new_marker);
             }
+            obj.marker_groups[marker_entry.displayName] = marker_group;
         }
     }
-
 
     if (typeof (obj.spawn) == "object")
     {
