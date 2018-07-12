@@ -269,12 +269,12 @@ app.map.on("baselayerchange", function (event)
     // before updating the current_layer, remove the marker control, if it exists
     if (app.current_world && app.current_layer[app.current_world])
     {
-        const layer = app.current_layer[app.current_world];
-        if (layer === undefined)
+        const currTileset = app.current_layer[app.current_world];
+        if (currTileset === undefined)
         {
             return;
         }
-        const tsc = layer.tileSetConfig;
+        const tsc = currTileset.tileSetConfig;
 
         if (tsc.markerCtrl)
         {
