@@ -28,7 +28,7 @@ interface Centers
 
 interface CurrentLayer
 {
-    [world: string]: OverviewerLayer;
+    [world: string]: OverviewerLayer | undefined;
 }
 
 interface MapTypes
@@ -135,6 +135,10 @@ function updateHash()
     }
 
     const currTileset = app.current_layer[currWorld];
+    if (currTileset === undefined)
+    {
+        return;
+    }
 
     const ovconf = currTileset.tileSetConfig;
 
@@ -265,7 +269,12 @@ app.map.on("baselayerchange", function (event)
     // before updating the current_layer, remove the marker control, if it exists
     if (app.current_world && app.current_layer[app.current_world])
     {
-        const tsc = app.current_layer[app.current_world].tileSetConfig;
+        const layer = app.current_layer[app.current_world];
+        if (layer === undefined)
+        {
+            return;
+        }
+        const tsc = layer.tileSetConfig;
 
         if (tsc.markerCtrl)
         {
