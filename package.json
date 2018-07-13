@@ -15,5 +15,9 @@
   "license": "./LICENSE",
   "name": "shmuelie.minecraft",
   "private": true,
-  "readme": "./README.md"
+  "readme": "./README.md",
+  "scripts": {
+    "lint": "tslint --project ./",
+    "build": "tsc"
+  }
 }
