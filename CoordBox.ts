@@ -21,7 +21,7 @@ const coordBox: CoordBox = L.Control.extend({
     {
         this.coord_box = <HTMLDivElement>L.DomUtil.create("div", "coordbox");
     },
-    render: function (this: CoordBoxPrototype, latlng: { lat: number, lng: number }): void
+    render: function (this: CoordBoxPrototype, latlng: L.LatLng): void
     {
         const currWorld = app.current_world;
 
@@ -33,7 +33,7 @@ const coordBox: CoordBox = L.Control.extend({
 
         const ovconf = currTileset.tileSetConfig;
 
-        const w_coords = fromLatLngToWorld(latlng.lat, latlng.lng, ovconf);
+        const w_coords = fromLatLngToWorld(latlng, ovconf);
 
         const r_x = Math.floor(Math.floor(w_coords.x / 16) / 32);
         const r_z = Math.floor(Math.floor(w_coords.z / 16) / 32);

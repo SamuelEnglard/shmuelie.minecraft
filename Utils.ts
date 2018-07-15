@@ -1,6 +1,17 @@
-export function fromWorldToLatLng(x: number, y: number, z: number, tset: OverviewerTileSet): [number, number]
-{
+import * as L from "leaflet";
 
+export function point3D(p: Point3DExpression): Point3D
+{
+    if (Array.isArray(p))
+    {
+        return { x: p[0], y: p[1], z: p[2] };
+    }
+    return p;
+}
+
+export function fromWorldToLatLng(point: Point3DExpression, tset: OverviewerTileSet): L.LatLngTuple
+{
+    point = point3D(point);
     const zoomLevels = tset.zoomLevels;
     const north_direction = tset.north_direction;
 
@@ -11,20 +22,20 @@ export function fromWorldToLatLng(x: number, y: number, z: number, tset: Overvie
 
     if (north_direction === overviewerConfig.CONST.UPPERRIGHT)
     {
-        const temp = x;
-        x = -z + 15;
-        z = temp;
+        const temp = point.x;
+        point.x = -point.z + 15;
+        point.z = temp;
     }
     else if (north_direction === overviewerConfig.CONST.LOWERRIGHT)
     {
-        x = -x + 15;
-        z = -z + 15;
+        point.x = -point.x + 15;
+        point.z = -point.z + 15;
     }
     else if (north_direction === overviewerConfig.CONST.LOWERLEFT)
     {
-        const temp = x;
-        x = z;
-        z = -temp + 15;
+        const temp = point.x;
+        point.x = point.z;
+        point.z = -temp + 15;
     }
 
     // This information about where the center column is may change with
@@ -42,15 +53,15 @@ export function fromWorldToLatLng(x: number, y: number, z: number, tset: Overvie
     // chunk_render in src/iterate.c
 
     // each block on X axis adds 12px to x and subtracts 6px from y
-    lng += 12 * x * perPixel;
-    lat -= 6 * x * perPixel;
+    lng += 12 * point.x * perPixel;
+    lat -= 6 * point.x * perPixel;
 
     // each block on Y axis adds 12px to x and adds 6px to y
-    lng += 12 * z * perPixel;
-    lat += 6 * z * perPixel;
+    lng += 12 * point.z * perPixel;
+    lat += 6 * point.z * perPixel;
 
     // each block down along Z adds 12px to y
-    lat += 12 * (256 - y) * perPixel;
+    lat += 12 * (256 - point.y) * perPixel;
 
     // add on 12 px to the X coordinate to center our point
     lng += 12 * perPixel;
@@ -58,13 +69,14 @@ export function fromWorldToLatLng(x: number, y: number, z: number, tset: Overvie
     return [-lat * overviewerConfig.CONST.tileSize, lng * overviewerConfig.CONST.tileSize];
 }
 
-export function fromLatLngToWorld(lat: number, lng: number, tset: OverviewerTileSet): {x: number, y: number, z: number}
+export function fromLatLngToWorld(latLng: L.LatLngExpression, tset: OverviewerTileSet): Point3D
 {
     const zoomLevels = tset.zoomLevels;
     const north_direction = tset.north_direction;
+    const latLngStrong = L.latLng(latLng);
 
-    lat = -lat / overviewerConfig.CONST.tileSize;
-    lng = lng / overviewerConfig.CONST.tileSize;
+    let lat = -latLngStrong.lat / overviewerConfig.CONST.tileSize;
+    let lng = latLngStrong.lng / overviewerConfig.CONST.tileSize;
 
     // lat lng will always be between (0,0) -- top left corner
     //                                (-384, 384) -- bottom right corner

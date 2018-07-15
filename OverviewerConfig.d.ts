@@ -1,6 +1,23 @@
+interface MapLocation
+{
+    latLng: L.LatLngExpression;
+    zoom: number;
+}
+
+type Point3DTuple = [number, number, number];
+
+interface Point3D
+{
+    x: number;
+    y: number;
+    z: number;
+}
+
+type Point3DExpression = Point3D | Point3DTuple;
+
 interface OverviewerTileSet
 {
-    spawn: number[],
+    spawn: Point3DTuple,
     isOverlay: boolean,
     last_rendertime: number,
     name: string,
@@ -59,7 +76,7 @@ interface OverviewerConfig
             overlays: boolean,
             pan: boolean
         },
-        center: number[],
+        center: [number, number],
         cacheTag: string
     }
 }

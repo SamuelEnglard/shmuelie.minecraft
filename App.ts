@@ -23,7 +23,7 @@ interface OverviewerLayersObject extends L.Control.LayersObject
 
 interface Centers
 {
-    [world: string]: { latLng: L.LatLng, zoom: number } | undefined;
+    [world: string]: MapLocation | undefined;
 }
 
 interface CurrentLayer
@@ -142,8 +142,7 @@ function updateHash()
 
     const ovconf = currTileset.tileSetConfig;
 
-    const coordinates = fromLatLngToWorld(app.map.getCenter().lat,
-        app.map.getCenter().lng,
+    const coordinates = fromLatLngToWorld(app.map.getCenter(),
         ovconf);
     let zoom: number | "max" | "min" = app.map.getZoom();
 
@@ -186,9 +185,9 @@ function goToHash()
     const target_layer = app.mapTypes[world_name][tileset_name];
     const ovconf = target_layer.tileSetConfig;
 
-    const latlngcoords = fromWorldToLatLng(parseInt(coords[1], 10),
+    const latlngcoords = fromWorldToLatLng([parseInt(coords[1], 10),
         parseInt(coords[2], 10),
-        parseInt(coords[3], 10),
+        parseInt(coords[3], 10)],
         ovconf);
 
     if (zoom === "max")
@@ -315,9 +314,7 @@ app.map.on("baselayerchange", function (event)
             iconSize: [32, 37],
             iconAnchor: [15, 33],
         });
-        const latlng = fromWorldToLatLng(ovconf.spawn[0],
-            ovconf.spawn[1],
-            ovconf.spawn[2],
+        const latlng = fromWorldToLatLng(ovconf.spawn,
             ovconf);
         const ohaimark = <L.Marker<void>>L.marker(latlng, { icon: spawnIcon, title: "Spawn" });
         ohaimark.on("click", function (ev2)
@@ -403,7 +400,7 @@ overviewerConfig.tilesets.forEach(function (obj)
             for (let dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++)
             {
                 const db = markersDB[marker_entry.groupName].raw[dbidx];
-                const latlng = fromWorldToLatLng(db.x, db.y, db.z, obj);
+                const latlng = fromWorldToLatLng(db, obj);
                 let m_icon;
                 if (db.icon !== undefined)
                 {
@@ -423,7 +420,7 @@ overviewerConfig.tilesets.forEach(function (obj)
 
     if (typeof (obj.spawn) === "object")
     {
-        const latlng = fromWorldToLatLng(obj.spawn[0], obj.spawn[1], obj.spawn[2], obj);
+        const latlng = fromWorldToLatLng(obj.spawn, obj);
         app.centers[obj.world] = { latLng: L.latLng(latlng), zoom: 1 };
     }
     else
@@ -443,7 +440,7 @@ app.layerCtrl = L.control.layers(
     .addTo(app.map);
 app.current_world = overviewerConfig.worlds[0];
 
-app.map.setView(fromWorldToLatLng(tset.spawn[0], tset.spawn[1], tset.spawn[2], tset), 1);
+app.map.setView(fromWorldToLatLng(tset.spawn, tset), 1);
 
 if (!initHash())
 {
