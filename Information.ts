@@ -42,11 +42,11 @@ const information: Information = L.Control.extend({
     },
     onAdd: function (this: InformationPrototype, map: L.Map): HTMLElement | null
     {
+        this.map = map;
         if (this.button.onAdd)
         {
             return this.button.onAdd(map);
         }
-        this.map = map;
         return null;
     }
 });
