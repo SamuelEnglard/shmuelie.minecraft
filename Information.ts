@@ -5,9 +5,7 @@ import "leaflet-custom";
 interface InformationPrototype extends L.Control
 {
     button: L.Control.EasyButton;
-    onClick: () => void;
     infoArea: L.Control.Custom;
-    open: boolean;
     map: L.Map;
 }
 
@@ -15,12 +13,33 @@ interface Information
 {
     new(): InformationPrototype;
 }
-
 const information: Information = L.Control.extend({
     initialize: function (this: InformationPrototype): void
     {
-        this.button = L.easyButton("<span>&#8505;</span>", this.onClick.bind(this), "Information");
-        this.open = false;
+        this.button = L.easyButton({
+            states: [
+                {
+                    stateName: "showInfo",
+                    onClick: (btn: L.Control.EasyButton) =>
+                    {
+                        this.infoArea.addTo(this.map);
+                        btn.state("hideInfo");
+                    },
+                    icon: "<span>&#8505;</span>",
+                    title: "Show Information"
+                },
+                {
+                    stateName: "hideInfo",
+                    onClick: (btn: L.Control.EasyButton) =>
+                    {
+                        this.infoArea.remove();
+                        btn.state("showInfo");
+                    },
+                    icon: "<span>×</span>",
+                    title: "Hide Information"
+                }
+            ]
+        });
         this.infoArea = L.control.custom({
             classes: "leaflet-popup-content-wrapper",
             content: "<div class='leaflet-popup-content'>Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + (<HTMLMetaElement>document.getElementsByName("revision")[0]).content + "</div>",
@@ -28,18 +47,6 @@ const information: Information = L.Control.extend({
                 maxWidth: "150px"
             }
         });
-    },
-    onClick: function (this: InformationPrototype): void
-    {
-        if (this.open)
-        {
-            this.infoArea.remove();
-        }
-        else
-        {
-            this.infoArea.addTo(this.map);
-        }
-        this.open = !this.open;
     },
     onAdd: function (this: InformationPrototype, map: L.Map): HTMLElement | null
     {
