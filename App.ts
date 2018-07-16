@@ -5,6 +5,7 @@ import Worlds from "./Worlds";
 import CoordBox from "./CoordBox";
 import "./markers";
 import "./markersDB";
+import Information from "./Information";
 
 interface OverviewerLayer extends L.Layer
 {
@@ -56,6 +57,7 @@ let locationMarker: L.Marker<void> | null = null;
 let lastHash = "";
 const worldCtrl = new Worlds();
 const coord_box = new CoordBox();
+const infoBox = new Information();
 
 function runReadyQueue(): void
 {
@@ -355,6 +357,7 @@ overviewerConfig.worlds.forEach(function (world_name)
 compass.addTo(app.map);
 coord_box.addTo(app.map);
 worldCtrl.addTo(app.map);
+infoBox.addTo(app.map);
 
 app.map.on("mousemove", function (event)
 {
