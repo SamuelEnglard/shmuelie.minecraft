@@ -22,7 +22,8 @@ const information: Information = L.Control.extend({
         this.button = L.easyButton("<span>&#8505;</span>", this.onClick.bind(this), "Information");
         this.open = false;
         this.infoArea = L.control.custom({
-            content: "Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + (<HTMLMetaElement>document.getElementsByName("revision")[0]).content,
+            classes: "leaflet-popup-content-wrapper",
+            content: "<div class='leaflet-popup-content'>Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + (<HTMLMetaElement>document.getElementsByName("revision")[0]).content + "</div>",
             style: <CSSStyleDeclaration>{
                 maxWidth: "150px"
             }
@@ -48,6 +49,16 @@ const information: Information = L.Control.extend({
             return this.button.onAdd(map);
         }
         return null;
+    },
+    setPosition: function (this: InformationPrototype, position: L.ControlPosition): InformationPrototype
+    {
+        this.button.setPosition(position);
+        this.infoArea.setPosition(position);
+        return this;
+    },
+    getPosition: function (this: InformationPrototype): L.ControlPosition
+    {
+        return this.button.getPosition();
     }
 });
 
