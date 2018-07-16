@@ -57,7 +57,7 @@ let locationMarker: L.Marker<void> | null = null;
 let lastHash = "";
 const worldCtrl = new Worlds();
 const coord_box = new CoordBox();
-const infoBox = new Information();
+const infoBox = new Information().setPosition("topleft");
 
 function runReadyQueue(): void
 {
