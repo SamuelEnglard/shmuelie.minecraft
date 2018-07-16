@@ -5,9 +5,10 @@ import "leaflet-custom";
 interface InformationPrototype extends L.Control
 {
     button: L.Control.EasyButton;
-    onClick: (btn: L.Control.EasyButton, map: L.Map) => void;
+    onClick: () => void;
     infoArea: L.Control.Custom;
     open: boolean;
+    map: L.Map;
 }
 
 interface Information
@@ -18,7 +19,7 @@ interface Information
 const information: Information = L.Control.extend({
     initialize: function (this: InformationPrototype): void
     {
-        this.button = L.easyButton("<span>&#8505;</span>", this.onClick, "Information");
+        this.button = L.easyButton("<span>&#8505;</span>", this.onClick.bind(this), "Information");
         this.open = false;
         this.infoArea = L.control.custom({
             content: "Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + (<HTMLMetaElement>document.getElementsByName("revision")[0]).content,
@@ -27,7 +28,7 @@ const information: Information = L.Control.extend({
             }
         });
     },
-    onClick: function (this: InformationPrototype, _btn: L.Control.EasyButton, map: L.Map): void
+    onClick: function (this: InformationPrototype): void
     {
         if (this.open)
         {
@@ -35,8 +36,9 @@ const information: Information = L.Control.extend({
         }
         else
         {
-            this.infoArea.addTo(map);
+            this.infoArea.addTo(this.map);
         }
+        this.open = !this.open;
     },
     onAdd: function (this: InformationPrototype, map: L.Map): HTMLElement | null
     {
@@ -44,6 +46,7 @@ const information: Information = L.Control.extend({
         {
             return this.button.onAdd(map);
         }
+        this.map = map;
         return null;
     }
 });
