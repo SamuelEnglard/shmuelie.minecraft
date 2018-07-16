@@ -35,7 +35,7 @@ const information: Information = L.Control.extend({
                         this.infoArea.remove();
                         btn.state("showInfo");
                     },
-                    icon: "<span>×</span>",
+                    icon: "<span>&#215;</span>",
                     title: "Hide Information"
                 }
             ]
