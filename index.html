@@ -31,10 +31,12 @@
                 },
                 shim: {
                     "leaflet-easybutton": {
-                        deps: ["leaflet"]
+                        deps: ["leaflet"],
+                        exports: "L.Control.EasyButton"
                     },
                     "leaflet-custom": {
-                        deps: ["leaflet"]
+                        deps: ["leaflet"],
+                        exports: "L.control.custom"
                     }
                 }
             });
