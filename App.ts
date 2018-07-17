@@ -5,6 +5,7 @@ import Worlds from "./Worlds";
 import CoordBox from "./CoordBox";
 import "./markers";
 import "./markersDB";
+import "./overviewerConfig";
 import Information from "./Information";
 
 interface OverviewerLayer extends L.Layer

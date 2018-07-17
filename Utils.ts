@@ -1,4 +1,5 @@
 import * as L from "leaflet";
+import "./overviewerConfig";
 
 export function point3D(p: Point3DExpression): Point3D
 {
