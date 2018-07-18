@@ -1,5 +1,6 @@
 import * as L from "leaflet";
-import "./overviewerConfig";
+import * as overviewerConfig from './overviewerConfig';
+import { Point3DExpression, Point3D, OverviewerTileSet } from "./overviewerConfig";
 
 export function point3D(p: Point3DExpression): Point3D
 {
