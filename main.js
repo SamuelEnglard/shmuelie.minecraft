@@ -7,9 +7,9 @@
             "overviewer": ["App", "Compass", "CoordBox", "Information", "Utils", "Worlds"]
         },
         paths: {
-            "leaflet": "https://unpkg.com/leaflet@1.3.1/dist/leaflet",
-            "leaflet-easybutton": "https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button",
-            "leaflet-custom": "https://cdn.rawgit.com/yigityuce/Leaflet.Control.Custom/7b4c9088/Leaflet.Control.Custom"
+            "leaflet": "https://cdn.jsdelivr.net/npm/leaflet@1.3.3/dist/leaflet-src.min",
+            "leaflet-easybutton": "https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.min",
+            "leaflet-custom": "https://cdn.jsdelivr.net/npm/leaflet-control-custom@1.0.0/Leaflet.Control.Custom.min"
         },
         shim: {
             "leaflet-easybutton": {
