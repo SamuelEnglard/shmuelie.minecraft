@@ -30,6 +30,19 @@
                 exports: "markersDB"
             }
         },
+        onNodeCreated: function (node, config, module, path)
+        {
+            var sri = {
+                "leaflet": "sha384-watgrHyz5s6If1F1SQTokK1ytZo0ZIMziman7hchM9VFZ+n4Gx2MJtSVr15p7NSv",
+                "leaflet-easybutton": "sha384-nYukKhU4gP3v3v9WXXWSodjuI03hjcPwRwSp3F8eHMmyTA4T2y4iGMa6SiNCfEBR",
+                "leaflet-custom": "sha384-0YoQdbydLb3Fy70pJLKP4X5ZRcwmHaeNj62ZJUhkBmvSpe42R0RrDCAP5+Q6XOWe"
+            };
+            if (sri[module])
+            {
+                node.setAttribute("integrity", sri[module]);
+                node.setAttribute("crossorigin", "anonymous");
+            }
+        },
         deps: ["App"]
     });
 })();
