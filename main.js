@@ -19,6 +19,15 @@
             "leaflet-custom": {
                 deps: ["leaflet"],
                 exports: "L.control.custom"
+            },
+            "overviewerConfig": {
+                exports: "overviewerConfig"
+            },
+            "markers": {
+                exports: "markers"
+            },
+            "markersDB": {
+                exports: "markersDB"
             }
         },
         deps: ["App"]
