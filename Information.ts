@@ -1,6 +1,7 @@
 import * as L from "leaflet";
 import "leaflet-easybutton";
 import "leaflet-custom";
+import { DateTime } from "luxon";
 
 interface InformationPrototype extends L.Control
 {
@@ -42,7 +43,7 @@ const information: Information = L.Control.extend({
         });
         this.infoArea = L.control.custom({
             classes: "leaflet-popup-content-wrapper",
-            content: "<div class='leaflet-popup-content'>Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + (<HTMLMetaElement>document.getElementsByName("revision")[0]).content + "</div>",
+            content: "<div class='leaflet-popup-content'>Generated using " + (<HTMLMetaElement>document.getElementsByName("generator")[0]).content + " on " + DateTime.fromHTTP((<HTMLMetaElement>document.getElementsByName("revision")[0]).content).toLocaleString(DateTime.DATETIME_FULL) + "</div>",
             style: <CSSStyleDeclaration>{
                 maxWidth: "150px"
             }

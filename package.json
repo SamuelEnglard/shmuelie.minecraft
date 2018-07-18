@@ -9,7 +9,8 @@
     "@types/leaflet": "^1.2.0",
     "typescript": "~2.7.0",
     "tslint": "5.10.0",
-    "tslint-language-service": "0.9.9"
+    "tslint-language-service": "0.9.9",
+    "@types/luxon": "^1.2.1"
   },
   "homepage": "https://shmuelie.minecraft.englard.net/",
   "license": "./LICENSE",
